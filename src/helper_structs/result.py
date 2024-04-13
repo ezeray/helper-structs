@@ -5,7 +5,15 @@ from ._types import T, E, U, F
 
 class Result(Generic[T, E]):
     """
-    My Result<T, E> class
+    This is an adapted version of the Rust Resulst enum, which has the
+    signature Result<T, E>, with some added sugar of my personal
+    liking, in particular the bing/map part with the rshift dunder
+    method.
+
+    This class should not be instantiated directly, instead the user
+    should use the class method Result.Ok() for a success value or the
+    Result.Err() for a failure value. This serves to handle errors in
+    programs without causing a panic at any potential issue.
     """
 
     __slots__ = ("_val", "_is_ok", "_type", "_failure")
@@ -44,10 +52,14 @@ class Result(Generic[T, E]):
         return not self._is_ok
 
     def __repr__(self) -> str:
-        return (
-            f"Result(\n{self._val=},\n{self._type=},"
-            f"\n{self._is_ok=},\n{self._failure=})"
-        )
+        return f"Ok({self._val!r})" if self._is_ok else f"Err({self._val!r})"
+        # return (
+        #     f"Result(\n{self._val=},\n{self._type=},"
+        #     f"\n{self._is_ok=},\n{self._failure=})"
+        # )
+
+    def __bool__(self) -> bool:
+        return self._is_ok
     
     def unwrap(self) -> T:
         if self._is_ok:
