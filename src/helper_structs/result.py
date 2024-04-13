@@ -14,6 +14,11 @@ class Result(Generic[T, E]):
     should use the class method Result.Ok() for a success value or the
     Result.Err() for a failure value. This serves to handle errors in
     programs without causing a panic at any potential issue.
+
+    >>> Result.Ok(10)
+    Ok(10)
+    >>> Result.Err("failure!")
+    Err('failure!')
     """
 
     __slots__ = ("_val", "_is_ok", "_type", "_failure")
@@ -37,18 +42,65 @@ class Result(Generic[T, E]):
 
     @classmethod
     def Ok(cls, val: T) -> "Result[T, E]":
+        """
+        Returns a Result Ok container for a success value.
+
+        >>> r = Result.Ok(10)
+        >>> r
+        Ok(10)
+        >>> r.is_ok
+        True
+        """
         return cls(val, True, _build=True)
 
     @classmethod
-    def Err(cls, err: E, failure: dict[str, Any])-> "Result[T, E]":
+    def Err(cls, err: E, failure: dict[str, Any] = {})-> "Result[T, E]":
+        """
+        Returns a Result Err container for a failure value, with added
+        data related to the failure in the form of a dictionary as an
+        optional value; default is an empty dict.
+
+        >>> e = Result.Err("an error occurred!")
+        >>> e
+        Err('an error occurred!')
+        >>> e._failure
+        {}
+        >>> e = Result.Err("failure!", failure={"err": "Error"})
+        >>> e
+        Err('failure!')
+        >>> e._failure
+        {'err': 'Error'}
+        """
         return cls(err, False, _build=True, _failure=failure)
 
     @property
     def is_ok(self) -> bool:
+        """
+        Method returns True if the Result is of the Ok variant
+
+        >>> r = Result.Ok(10)
+        >>> r.is_ok
+        True
+        >>> e = Result.Err("fail")
+        >>> e.is_ok
+        False
+
+        """
         return self._is_ok
 
     @property
     def is_err(self) -> bool:
+        """
+        Method returns True if the Result is of the Err variant
+
+        >>> r = Result.Ok(10)
+        >>> r.is_err
+        False
+        >>> e = Result.Err("fail")
+        >>> e.is_err
+        True
+
+        """
         return not self._is_ok
 
     def __repr__(self) -> str:
@@ -62,14 +114,51 @@ class Result(Generic[T, E]):
         return self._is_ok
     
     def unwrap(self) -> T:
+        """
+        Extracts the contained value of an Ok variant, or panics with a
+        generic message if an Err variant.
+
+        >>> r = Result.Ok(10)
+        >>> r.unwrap()
+        10
+        >>> e = Result.Err("fail")
+        >>> e.unwrap()
+        Traceback (most recent call last):
+            ...
+        ValueError: Contents of Result is Err: fail
+        """
         if self._is_ok:
             return self._val # type: ignore
         raise ValueError(f"Contents of Result is Err: {self._val}")
 
     def unwrap_or(self, default: T) -> T:
+        """
+        Extracts the contained value of an Ok variant, or returns a
+        default value passed if an Err variant
+
+        >>> r = Result.Ok(10)
+        >>> r.unwrap_or(2)
+        10
+        
+        >>> e = Result.Err("fail")
+        >>> e.unwrap_or(2)
+        2
+        """
         return self._val if self._is_ok else default # type: ignore
 
     def unwrap_or_else(self, op: Callable[[E], U]) -> T | U:
+        """
+        Extracts the contained value of an Ok variant, or computes it
+        from a callable passed, can be a function or a lambda.
+
+        >>> r = Result.Ok(10)
+        >>> r.unwrap_or_else(print)
+        10
+
+        >>> e = Result.Err("fail")
+        >>> e.unwrap_or_else(lambda x: len(x))
+        4
+        """
         return self._val if self._is_ok else op(self._val) # type: ignore
 
     def expect(self, msg: object) -> T:
@@ -142,3 +231,6 @@ class Result(Generic[T, E]):
             }
             return self.Err(e, failure=failure) # type: ignore
 
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
