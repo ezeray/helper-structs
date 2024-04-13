@@ -377,6 +377,13 @@ class Result(Generic[T, E]):
             }
             return self.Err(e, failure=failure) # type: ignore
 
+
+def Ok(val: T) -> Result[T, Any]:
+    return Result.Ok(val)
+
+def Err(err: E, failure: dict[str, Any] = {})-> Result[Any, E]:
+    return Result.Err(err, failure)
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

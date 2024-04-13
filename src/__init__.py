@@ -1,1 +1,1 @@
-from .helper_structs.result import Result
+from .helper_structs.result import Result, Ok, Err
