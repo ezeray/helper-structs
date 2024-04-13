@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "helper-structs"
+version = "0.0.1-alpha"
+authors = [
+    {name="Ezequiel Raigorodsky", email="ezequielraigorodsky@gmail.com"},
+]
+description="EzeRay's simple helper package with container structs"
+readme = "README.md"
+requires-python=">=3.9, <4"
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+]
+keywords=["development", "helper", "utils"]
+
