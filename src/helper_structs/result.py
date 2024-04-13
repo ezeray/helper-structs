@@ -1,6 +1,6 @@
 import traceback
 from typing import Any, Generic, Callable
-from result_struct._types import T, E, U, F
+from ._types import T, E, U, F
 
 
 class Result(Generic[T, E]):
