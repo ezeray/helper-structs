@@ -118,6 +118,10 @@ class Result(Generic[T, E]):
         Extracts the contained value of an Ok variant, or panics with a
         generic message if an Err variant.
 
+        Following the Rust docs, since this panics the use of it is 
+        discouraged; instead better to use pattern matching and handle
+        the error case explicitly, or calling another method.
+
         >>> r = Result.Ok(10)
         >>> r.unwrap()
         10
@@ -162,16 +166,70 @@ class Result(Generic[T, E]):
         return self._val if self._is_ok else op(self._val) # type: ignore
 
     def expect(self, msg: object) -> T:
+        """
+        Extracts the contained value of an Ok variant, or panics with
+        a custom message if an Err variant.
+
+        Following the Rust docs, since this panics the use of it is 
+        discouraged; instead better to use pattern matching and handle
+        the error case explicitly, or calling another method.
+
+        >>> r = Result.Ok(10)
+        >>> r.expect("Something failed")
+        10
+
+        >>> e = Result.Err("fail")
+        >>> e.expect("Something failed")
+        Traceback (most recent call last):
+            ...
+        ValueError: Something failed
+        """
         if self._is_ok:
             return self._val # type: ignore
         raise ValueError(msg)
 
     def unwrap_err(self) -> E:
+        """
+        Extract the contained value if an Err variant, or panics with
+        a generic message if an Ok variant.
+
+        Following the Rust docs, since this panics the use of it is 
+        discouraged; instead better to use pattern matching and handle
+        the error case explicitly, or calling another method.
+
+        >>> r = Result.Ok(10)
+        >>> r.unwrap_err()
+        Traceback (most recent call last):
+            ...
+        ValueError: Contents of Result is Ok: 10
+
+        >>> e = Result.Err("fail")
+        >>> e.unwrap_err()
+        'fail'
+        """
         if not self._is_ok:
             return self._val # type: ignore
-        raise ValueError(f"Contents of Result is OK: {self._val}")
+        raise ValueError(f"Contents of Result is Ok: {self._val}")
 
     def expect_err(self, msg: object) -> E:
+        """
+        Extract the contained value if an Err variant, or panics with
+        a generic message if an Ok variant.
+
+        Following the Rust docs, since this panics the use of it is 
+        discouraged; instead better to use pattern matching and handle
+        the error case explicitly, or calling another method.
+
+        >>> r = Result.Ok(10)
+        >>> r.expect_err(msg="there is an error here")
+        Traceback (most recent call last):
+            ...
+        ValueError: there is an error here
+
+        >>> e = Result.Err("fail")
+        >>> e.expect_err(msg="there is an error here")
+        'fail'
+        """
         if not self._is_ok:
             return self._val # type: ignore
         raise ValueError(msg)
