@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "helper-structs"
-version = "0.0.1a1"
+version = "0.1.0"
 authors = [
     {name="Ezequiel Raigorodsky", email="ezequielraigorodsky@gmail.com"},
 ]
