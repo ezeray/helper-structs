@@ -1,6 +1,6 @@
 from functools import wraps
-from helper_structs import Ok, Err, Result
-from failure import FailureContainer
+from .result import Ok, Err, Result
+from .failure import FailureContainer
 
 
 def safe_exec(func):
